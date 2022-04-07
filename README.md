@@ -1,6 +1,6 @@
-# Firebase authentication with reach
+# Firebase authentication with react
 
-## What is used in this project
+## What is used in this project?
 
 - `Firebase` for user login authentication
 - `React.js` for building this project
