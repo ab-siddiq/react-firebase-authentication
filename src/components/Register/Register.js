@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
 import app from '../../firebase.init';
 const auth = getAuth(app);
@@ -15,6 +15,8 @@ const Register = () => {
             signInWithEmailAndPassword(auth, email, password)
                 .then(result => {
                     const user = result.user;
+                    setEmail('');
+                    setPassword('');
                     setSuccess('Login Success');
                     setError('');
                     console.log(user);
@@ -34,6 +36,7 @@ const Register = () => {
                 setPassword('');
                 setSuccess('Register success!');
                 setError('');
+                verifyEmail();
             })
             .catch(error => {
                 console.error(error);
@@ -52,6 +55,18 @@ const Register = () => {
     }
     const handleRegisterChange = event => {
         setRegistered(event.target.checked)
+    }
+    
+    const verifyEmail = ()=>{
+        sendEmailVerification(auth.currentUser)
+            .then(result => {
+                const user = result.user;
+                console.log('mail sent', user);
+        })
+    }
+    const handlePasswordReset = () => {
+        sendPasswordResetEmail(auth,email)
+        .then(()=>{console.log('reset link sent')})
     }
     
     return (
@@ -73,6 +88,9 @@ const Register = () => {
                     <div className="mt-1">
                         <input onChange={handleRegisterChange} type="checkbox" name="" id="" />
                         <span className='ml-2'>Already Registered?</span>
+                    </div>
+                    <div className="">
+                        <button onClick={handlePasswordReset}>Forgot password?</button>
                     </div>
                     <p>{success }</p>
                     <p>{error}</p>
