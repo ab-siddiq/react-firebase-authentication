@@ -6,6 +6,8 @@
     - `Gmail Sing In`
     - `Github Sign In`
     - `Email Sign In`
+    - `Email verification`
+    - `Forgot password`
 - `React.js` for building this project
 - `tailwind css` for ui design
 - `React Router` for navigating pages
