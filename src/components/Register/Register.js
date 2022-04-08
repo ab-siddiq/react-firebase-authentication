@@ -1,23 +1,48 @@
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
-const auth = getAuth();
+import app from '../../firebase.init';
+const auth = getAuth(app);
 const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [registered, setRegistered] = useState(false);
 
     const handleFormSubmit = event => {
-        console.log(email,'=>',password)
-        createUserWithEmailAndPassword(auth, email, password)
+        console.log(email, '=>', password)
+        if (registered) {
+            signInWithEmailAndPassword(auth, email, password)
+                .then(result => {
+                    const user = result.user;
+                    setSuccess('Login Success');
+                    setError('');
+                    console.log(user);
+                })
+                .catch(error => {
+                    console.error(error);
+                    setError('Not registered');
+                    setSuccess('')
+            })
+        }
+        else {
+            createUserWithEmailAndPassword(auth, email, password)
             .then(result => {
                 const user = result.user;
                 console.log(user)
+                setEmail('');
+                setPassword('');
+                setSuccess('Register success!');
+                setError('');
             })
             .catch(error => {
                 console.error(error);
+                setError('User exist!');
+                setSuccess('');
             });
+        }
+        
         event.preventDefault();
-      
-
     }
     const handleEmailBlur = event => {
         setEmail(event.target.value)
@@ -25,11 +50,18 @@ const Register = () => {
     const handlePasswordBlur = event => {
         setPassword(event.target.value)
     }
+    const handleRegisterChange = event => {
+        setRegistered(event.target.checked)
+    }
     
     return (
         <div className=''>
             <form action="" onSubmit={handleFormSubmit}>
+                
                 <div className="grid grid-cols-1 w-1/3 justify-center items-center mx-auto border-2  px-10 py-20 rounded mt-10">
+                    <div className="">
+                    <p>Please { registered ? 'Login' : 'Register'}!!</p>
+                    </div>
                     <div className="mt-3">
                         <label htmlFor="">Email</label>
                         <input onBlur={handleEmailBlur} className='mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1' type="email" name="" id="" placeholder='youremail@domain.com'/>
@@ -38,8 +70,16 @@ const Register = () => {
                         <label htmlFor="">Password</label>
                         <input onBlur={handlePasswordBlur} className='mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1' type="password" name="" id="" placeholder='set a password' />
                     </div>
+                    <div className="mt-1">
+                        <input onChange={handleRegisterChange} type="checkbox" name="" id="" />
+                        <span className='ml-2'>Already Registered?</span>
+                    </div>
+                    <p>{success }</p>
+                    <p>{error}</p>
                     <div className="mt-6 ">
-                        <input className='bg-green-700 text-green-50 px-3 py-2 w-full rounded cursor-pointer hover:scale-105 duration-200' type="submit" value="Register" />
+                        <button className='bg-green-700 text-green-50 px-3 py-2 w-full rounded cursor-pointer hover:scale-105 duration-200' type="submit"  >
+                                {registered ? 'Login' : 'Register'}
+                            </button>
                     </div>
 
                 </div>
