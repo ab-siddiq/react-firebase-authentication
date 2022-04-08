@@ -5,6 +5,7 @@
 - `Firebase` for user login authentication
     - `Gmail Sing In`
     - `Github Sign In`
+    - `Facebook Sign In`
     - `Email Sign In`
     - `Email verification`
     - `Forgot password`
