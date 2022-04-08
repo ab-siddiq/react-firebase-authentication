@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import React, { useState } from 'react';
 import app from '../../firebase.init';
 const auth = getAuth(app);
@@ -8,6 +8,8 @@ const Register = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [registered, setRegistered] = useState(false);
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
 
     const handleFormSubmit = event => {
         console.log(email, '=>', password)
@@ -37,6 +39,8 @@ const Register = () => {
                 setSuccess('Register success!');
                 setError('');
                 verifyEmail();
+                setUserName();
+                setPhoneNumber();
             })
             .catch(error => {
                 console.error(error);
@@ -46,6 +50,12 @@ const Register = () => {
         }
         
         event.preventDefault();
+    }
+    const handleNameBlur = event => {
+        setName(event.target.value)
+    }
+    const handlePhoneBlur = event => {
+        setPhone(event.target.value)
     }
     const handleEmailBlur = event => {
         setEmail(event.target.value)
@@ -68,7 +78,17 @@ const Register = () => {
         sendPasswordResetEmail(auth,email)
         .then(()=>{console.log('reset link sent')})
     }
-    
+    const setUserName = () => {
+        updateProfile(auth.currentUser, {
+            displayName: name, phoneNumber: phone
+        })
+        .then(()=>{console.log(name)})
+    }
+    const setPhoneNumber = () => {
+        updateProfile(auth.currentUser, {
+            phoneNumber: phone
+        })
+    }
     return (
         <div className=''>
             <form action="" onSubmit={handleFormSubmit}>
@@ -77,6 +97,15 @@ const Register = () => {
                     <div className="">
                     <p>Please { registered ? 'Login' : 'Register'}!!</p>
                     </div>
+                    {!registered && <div className="mt-3">
+                        <label htmlFor="">Name</label>
+                        <input onBlur={handleNameBlur} className='mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1' type="text" name="" id="" placeholder='your name' />
+                    </div>}
+                        {!registered &&
+                    <div className="mt-3">
+                        <label htmlFor="">Phone</label>
+                        <input onBlur={handlePhoneBlur} className='mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1' type="text" name="" id="" placeholder='your phone number'/>
+                    </div>}
                     <div className="mt-3">
                         <label htmlFor="">Email</label>
                         <input onBlur={handleEmailBlur} className='mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1' type="email" name="" id="" placeholder='youremail@domain.com'/>
